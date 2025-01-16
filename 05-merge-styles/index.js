@@ -4,7 +4,9 @@ const path = require('node:path');
 async function mergeStyles(src, dist) {
   try {
     const folderFiles = await readdir(src, { withFileTypes: true });
-    const cssFiles = folderFiles.filter((file) => path.extname(file.name) === '.css' && file.isFile());
+    const cssFiles = folderFiles.filter(
+      (file) => path.extname(file.name) === '.css' && file.isFile(),
+    );
 
     const stylesArr = [];
 
@@ -18,15 +20,14 @@ async function mergeStyles(src, dist) {
       const content = await readFile(filePath, 'utf8');
       stylesArr.push(content);
     }
-    
+
     const bundle = path.join(dist, 'bundle.css');
     await writeFile(bundle, stylesArr.join('\n'));
-
   } catch (err) {
     if (err.code === 'ENOENT') {
       console.error('Folders "styles" or "project-dist" does not exist');
     } else {
-      console.error('Error merging styles: ', err)
+      console.error('Error merging styles: ', err);
     }
   }
 }

@@ -20,7 +20,7 @@ async function copyDir(src, dest) {
       const destPath = path.join(dest, file.name);
 
       if (file.isFile()) {
-        await toCopyFile (srcPath, destPath);
+        await toCopyFile(srcPath, destPath);
       } else if (file.isDirectory()) {
         await copyDir(srcPath, destPath);
       }

@@ -17,5 +17,5 @@ rs.on('error', (err) => {
 });
 
 rs.on('end', () => {
-  console.log("\nThat's all!");
+  console.log('\nEnd!');
 });

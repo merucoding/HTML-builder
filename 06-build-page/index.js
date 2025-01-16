@@ -1,4 +1,11 @@
-const { mkdir, readFile, readdir, writeFile, rm, copyFile } = require('node:fs/promises');
+const {
+  mkdir,
+  readFile,
+  readdir,
+  writeFile,
+  rm,
+  copyFile,
+} = require('node:fs/promises');
 const path = require('node:path');
 
 async function createDir(path) {
@@ -17,12 +24,14 @@ async function createHTML(src, dest, components) {
     let htmlContent = await readFile(src, 'utf8');
     const componentsDir = await readdir(components, { withFileTypes: true });
 
-    for (const html of componentsDir) {
-      const filePath = path.join(components, html.name);
-      const fileName = path.parse(html.name).name;
-      const fileContent = await readFile(filePath, 'utf8');
+    for (const file of componentsDir) {
+      if (path.extname(file.name) === '.html' && file.isFile()) {
+        const filePath = path.join(components, file.name);
+        const fileName = path.parse(file.name).name;
+        const fileContent = await readFile(filePath, 'utf8');
 
-      htmlContent = htmlContent.replace(`{{${fileName}}}`, fileContent);
+        htmlContent = htmlContent.replace(`{{${fileName}}}`, fileContent);
+      }
     }
 
     await writeFile(dest, htmlContent);
@@ -61,7 +70,7 @@ async function mergeStyles(src, dest) {
     await writeFile(bundle, stylesArr.join('\n'));
   } catch (err) {
     if (err.code === 'ENOENT') {
-      console.error('Folders "styles" or "project-dist" does not exist');
+      console.error('Folders "styles" does not exist');
     } else {
       console.error('Error merging styles: ', err);
     }
@@ -92,14 +101,14 @@ async function copyDir(src, dest) {
       const destPath = path.join(dest, file.name);
 
       if (file.isFile()) {
-        await toCopyFile (srcPath, destPath);
+        await toCopyFile(srcPath, destPath);
       } else if (file.isDirectory()) {
         await copyDir(srcPath, destPath);
       }
     }
   } catch (err) {
     if (err.code === 'ENOENT') {
-      console.error('Folder "files" does not exist');
+      console.error('Folder "assets" does not exist');
     } else {
       console.error('Error copying dir: ', err);
     }
